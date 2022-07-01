@@ -3,9 +3,14 @@
 struct node_
 {
     int32_t unique_id;
-    struct node_ *next;
-    struct node_ *previous;
+    struct node_ *link;
 };
+
+ListNode *
+XOR(ListNode *x, ListNode *y)
+{
+    return (ListNode *)((uintptr_t)(x) ^ (uintptr_t)(y));
+}
 
 int32_t
 allocHead(ListNode **head)
@@ -19,8 +24,7 @@ allocHead(ListNode **head)
         if (NULL != *head)
         {
             (*head)->unique_id = HEAD_ID;
-            (*head)->previous = NULL;
-            (*head)->next = NULL;
+            (*head)->link = NULL;
 
             rc = OK;
         }
@@ -45,17 +49,16 @@ getUniqueId(ListNode *node, int32_t *id)
 }
 
 ListNode *
-add(int32_t unique_id, ListNode *previous)
+add(int32_t unique_id, ListNode *last)
 {
     ListNode *newNode = malloc(sizeof(ListNode));
 
     if (NULL != newNode)
     {
-        newNode->next = NULL;
-        newNode->previous = previous;
+        newNode->link = XOR(last, NULL);
         newNode->unique_id = unique_id;
 
-        previous->next = newNode;
+        last->link = XOR(newNode, XOR(last->link, NULL));
     }
     else if (NULL != newNode && HEAD_ID == unique_id)
     {
@@ -81,7 +84,7 @@ get(ListNode *head, int32_t index)
         else if (iterationCount < index)
         {
             iterationCount++;
-            get(head->next, index);
+            get(XOR(NULL, head->link), index);
         }
         else
         {
@@ -98,7 +101,7 @@ void destroyList(ListNode **head)
 {
     if (NULL != head && NULL != *head)
     {
-        ListNode *nextNode = (*head)->next;
+        ListNode *nextNode = XOR(NULL, (*head)->link);
         destroyList(&nextNode);
 
         free(*head);

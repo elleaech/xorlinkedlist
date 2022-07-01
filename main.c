@@ -15,6 +15,7 @@ int main()
     {
         add(5, add(4, add(3, add(2, add(1, head)))));
 
+        /*
         ListNode *thirdPosition = get(head, 3);
 
         if (NULL != thirdPosition)
@@ -25,6 +26,7 @@ int main()
 
             printf("Unique ID: %d\n", id);
         }
+        */
     }
 
     return OK;
